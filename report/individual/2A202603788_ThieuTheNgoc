@@ -6,25 +6,27 @@
 
 ## 1. Bằng chứng
 
-| Tệp | Có? |
-| --- | --- |
-| [`day01_lab.ipynb`](day01_lab.ipynb) — notebook đã chạy, còn output | ☑ |
-| [`lab1_report.json`](lab1_report.json) — do ô "Báo cáo cuối" sinh ra | ☑ |
-| [`hand_calc.jpg`](hand_calc.jpg) — ảnh tính tay có các bước | ☑ |
+| Tệp                                                                  | Có? |
+| -------------------------------------------------------------------- | --- |
+| [`day01_lab.ipynb`](day01_lab.ipynb) — notebook đã chạy, còn output  | ☑   |
+| [`lab1_report.json`](lab1_report.json) — do ô "Báo cáo cuối" sinh ra | ☑   |
+| [`hand_calc.jpg`](hand_calc.jpg) — ảnh tính tay có các bước          | ☑   |
 
 ## 2. Kết quả chính
-| Mô hình tiếp cận | F1 test (Full) | F1 (SUB 40) | p95 ms/tin | USD / 1k tin |
-| --- | --- | --- | --- | --- |
-| 1. BoW + LogReg (tự code) | 0.911 | 0.974 | 0.077 ms | 0.0 |
-| 2. BoW + MLP (deep learning) | 0.941 | 0.974 | 0.885 ms | 0.0 |
-| 3a. Encoder (MiniLM) + kNN | 0.887 | 0.976 | 67.215 ms | 0.0 |
-| 3b. Encoder (MiniLM) + LogReg | 0.963 | 0.974 | 41.887 ms | 0.0 |
-| 3c. Encoder (MiniLM) + MLP head | 0.969 | 0.974 | 38.872 ms | 0.0 |
-| 4a. LLM nhỏ zero-shot | N/A | 0.952 | 2636.325 ms | 0.0 (Groq) |
-| 4b. LLM lớn zero-shot | N/A | 0.952 | 2744.057 ms | 0.0 (Groq) |
-| 4c. LLM nhỏ few-shot | N/A | 0.947 | 3711.163 ms | 0.0 (Groq) |
+
+| Mô hình tiếp cận                | F1 test (Full) | F1 (SUB 40) | p95 ms/tin  | USD / 1k tin |
+| ------------------------------- | -------------- | ----------- | ----------- | ------------ |
+| 1. BoW + LogReg (tự code)       | 0.911          | 0.974       | 0.077 ms    | 0.0          |
+| 2. BoW + MLP (deep learning)    | 0.941          | 0.974       | 0.885 ms    | 0.0          |
+| 3a. Encoder (MiniLM) + kNN      | 0.887          | 0.976       | 67.215 ms   | 0.0          |
+| 3b. Encoder (MiniLM) + LogReg   | 0.963          | 0.974       | 41.887 ms   | 0.0          |
+| 3c. Encoder (MiniLM) + MLP head | 0.969          | 0.974       | 38.872 ms   | 0.0          |
+| 4a. LLM nhỏ zero-shot           | N/A            | 0.952       | 2636.325 ms | 0.0 (Groq)   |
+| 4b. LLM lớn zero-shot           | N/A            | 0.952       | 2744.057 ms | 0.0 (Groq)   |
+| 4c. LLM nhỏ few-shot            | N/A            | 0.947       | 3711.163 ms | 0.0 (Groq)   |
 
 ## 3. Dự đoán và thực tế
+
 Dự đoán: Mạng 2 lớp tuyến tính xếp liên tiếp sẽ có hiệu năng F1 nằm ở mức trung gian giữa Phần 1 và Phần 2:
 • Dự đoán: Mô hình sẽ bị phân kỳ hoàn toàn, Loss nhảy vọt lên vô hạn hoặc dao động không thể giảm.
 • Thực tế: Sau một cú gai nhọn vọt lên ở vài epoch đầu tiên, mô hình tự hội tụ về mức loss thấp kỷ lục (0.007).
@@ -45,17 +47,27 @@ Dự đoán knn_semantic (Truy vấn né từ khóa rác):
 2 Case cụ thể và cơ chế gây sai:
 Case 1 (Thật=Spam | Đoán=Ham): "Money i have won wining number 946 wot do i do next"
 Case 2 (Thật=Ham | Đoán=Spam): "Dear, will call Tmorrow.pls accomodate."
+
 ## 5. Thử thách cá nhân
 
 Đề 1: Đổi ngưỡng quyết định 0.5 → 0.2 và → 0.8 cho mô hình Phần 1. Báo cáo chỉ số và tư vấn giải pháp cho ngân hàng bảo vệ tin nhắn OTP.
+Khi ngưỡng 0.2, AI cực kì gắt gao và sẽ bắt tất cả tin nhắn dù chỉ có chút xíu spam (20%), điều này làm cho Recall tăng cao, Precision giảm mạnh (bắt được gần như các tin rác nhưng lại chặn nhầm nhiều tin bình thường) Khi ngưỡng 0.8, AI cực kì thả lỏng và phải khi nghi ngờ tới 80% AI mới bắt spam, điều này làm cho Recall giảm mạnh, Precision tăng cao (tỉ lệ tin rác cao nhưng khi đã bắt ti rác thì gần như chính xác, tỉ lệ chăn nhầm thấp)
 Giải thích, Tư vấn Ngân hàng: Ngân hàng sợ chặn nhầm OTP bắt buộc phải chọn ngưỡng cao 0.8. Vì tin nhắn OTP quyết định giao dịch của khách, lỗi bắt oan (False Positive) là không được phép xảy ra. Ngưỡng cao giúp mô hình cực kỳ thận trọng, triệt tiêu lỗi chặn nhầm, bảo vệ trải nghiệm khách hàng tối đa.
+
 ## 6. Phương án cho sản phẩm thật
 
 Phương án lựa chọn: Encoder (MiniLM) + Logistic Regression.
+
 ## 7. AI log và điều đã học
 
 Hỏi nguyên nhân lỗi RateLimitError 429 và NotFoundError 404 của Gemini API → Nhận được giải thích do hạn mức Free Tier quá tải và sai cấu trúc URL → Thực hiện viết code chèn hàm nghỉ giãn cách time.sleep(4.0) để giữ nhịp băng thông an toàn.
 
+Nhờ hỗ trợ đọc biểu đồ, thông số ở các bài thực nghiệm -> Nhận được hướng dẫn các đọc thông số, biểu đồ -> Thử đọc lại theo hướng dẫn của AI
+
+Nhờ hỗ các các syntax python, các thông thức về thuật toán AI chưa biết -> Các syntax, thuật toán và hướng dẫn cách sử dụng -> Làm thử các thuật toán theo hướng dẫn của AI và hiểu hơn về các thuật toán
+
+Nhờ AI giải thích các lý thuyết, hàm được viết sẵn đê hiểu rõ hơn về thuật toán -> Giải thích chi tiết hàm, thuật toán được sử dụng -> Đọc lại các hàm, thuật toán được cung cấp và cố hiểu về vấn đề được học
+
 Điều hiểu ra:
-- Hiểu sâu sắc toán học ngầm của thuật toán Logistic Regression: Quy tắc "Trừ của trừ hóa thành cộng" trong dòng cập nhật trọng số chính là cơ chế tự sửa sai tăng điểm độc hại cho từ khóa ở vòng sau.
-- Nhận ra điểm yếu chí mạng của phương pháp túi từ Bag-of-Words: Việc chỉ đếm từ riêng lẻ mà bẻ gãy cấu trúc ngữ cảnh khiến mô hình hoàn toàn bất lực và dễ dàng bị đánh lừa bởi các kỹ thuật ngụy trang chữ hoặc nhồi từ khóa an toàn.
+Học được về hạn mức của các AI có thể gọi đến. Các syntax, thuật toán, các đọc biểu đồ mới.
+Hiểu ra các thiếu sót về kiến thức chưa biết và cần bổ sung.
